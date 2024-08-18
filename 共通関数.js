@@ -56,6 +56,7 @@ function add_label(){
         textarea.classList.add('label_area');
         textarea.classList.add('for_label');
         textarea.classList.add('no_select');
+        textarea.style.zIndex=2;
         // textarea.disabled = true;
         edit_area.appendChild(textarea); 
     }else if(count_label==10){
@@ -76,7 +77,7 @@ function add_textbox(){
         textarea.classList.add('label_area');
         textarea.classList.add('for_textbox');
         textarea.classList.add('no_select');
-        // textarea.disabled = true;
+        textarea.style.zIndex=2;
         edit_area.appendChild(textarea); 
     }else if(count_textbox==10){
         const button_textbox = document.getElementById('button_textbox');
@@ -105,6 +106,8 @@ function add_radio(){
         textarea2.classList.add('no_select');
         textarea1.style.boxSizing = "border-box";
         textarea2.style.boxSizing = "border-box";
+        textarea1.style.zIndex=2;
+        textarea2.style.zIndex=2;
         // textarea.disabled = true;
         edit_area.appendChild(textarea1);
         edit_area.appendChild(textarea2);
@@ -155,6 +158,7 @@ function radio1_plus(group_number){ //初期数でなく動的に対応。グル
         new_textarea.id="radio" + group_number + "_" + new_countx; //value更新後に最新の値を再取得してIDに設定
         new_textarea.style.top = top + "px";
         new_textarea.style.left = right+43 + "px";//ボタンの幅くらいの空白（なくてもいいが）
+        new_textarea.style.zIndex=2;
         custom_border(group_number);
         }else if(radio_map.get(group_number) == 8 ){
             button.textContent="売り切れ";
@@ -303,6 +307,7 @@ function add_command(){
         textarea.classList.add('command_area');
         textarea.classList.add('for_command');
         textarea.classList.add('no_select');
+        textarea.style.zIndex=2;
         // textarea.disabled = true;
         edit_area.appendChild(textarea); 
     }else if(count_command==10){
@@ -318,21 +323,23 @@ let count_row_map = new Map();//(テーブル番号,行数)
 var count_table = 0; //テーブル数をカウント
 
 function add_table(){
-    if(count_table < 2){
+    if(count_table < 1){
         count_table ++;
         const edit_area = document.getElementById("edit_area");
-        //th部作成
-        const th1 = document.createElement("textarea");
-        const th2 = document.createElement("textarea");
+        //move_button
         const move_button = document.createElement("textarea");
         move_button.textContent="✜";
         move_button.style.height="15px";
         move_button.style.width="15px";
         move_button.id="move_button"+count_table;
+        move_button.style.resize="none";
         move_button.classList.add('no_select');
         edit_area.appendChild(move_button);
-        th1.id = "table_th"+count_table + "_" + "1";//動的にIDを作成 例,table_th1_1
-        th2.id = "table_th"+count_table + "_" + "2";//動的にIDを作成
+        //th部作成
+        const th1 = document.createElement("textarea");
+        const th2 = document.createElement("textarea");
+        th1.id = "table"+count_table+"_th1";//動的にIDを作成 例,table1_th1
+        th2.id = "table"+count_table+"_th2";//動的にIDを作成 例,table1_th1
         th1.classList.add('label_area');//共通
         th2.classList.add('label_area');//共通
         th1.classList.add('for_table');
@@ -343,21 +350,22 @@ function add_table(){
         th2.style.boxSizing = "border-box";
         edit_area.appendChild(th1);
         edit_area.appendChild(th2);
-        count_th_map.set(count_table,2);//デフォルト値の設定（列2，行1）
-        count_row_map.set(count_table,0);
+        count_th_map.set(count_table,2);//デフォルト値の設定（列２）
         const rect = th1.getBoundingClientRect();
         const th1_x_right = rect.right;//右
         const th1_x_left = rect.left;//右
         const th1_x_top = rect.top;//上
         th2.style.left = th1_x_right + "px";
         th2.style.top = th1_x_top + "px";
+        th1.style.zIndex=2;
+        th2.style.zIndex=2;
         move_button.style.left=th1_x_left+"px";    
         move_button.style.top=(th1_x_top-35)+"px";    
         //td部作成
         const td1 = document.createElement("textarea");
         const td2 = document.createElement("textarea");
-        td1.id = "table_td"+count_table + "_" + "1";//動的にIDを作成 例,table_td1_1
-        td2.id = "table_td"+count_table + "_" + "2";//動的にIDを作成
+        td1.id = "table"+count_table+"_th1_row1";//動的にIDを作成 例,table1_th_row1
+        td2.id = "table"+count_table+"_th2_row1";//動的にIDを作成 例,table1_th2_row1
         td1.classList.add('label_area');//共通
         td2.classList.add('label_area');//共通
         td1.classList.add('for_table_data');
@@ -366,8 +374,11 @@ function add_table(){
         td2.classList.add('no_select');
         td1.style.boxSizing = "border-box";
         td2.style.boxSizing = "border-box";
+        td1.style.zIndex=2;
+        td2.style.zIndex=2;
         edit_area.appendChild(td1);
         edit_area.appendChild(td2);
+        count_row_map.set(count_table,1); //デフォルト値の設定（行１）
             //td1の初期位置
             const rect_td1 = th1.getBoundingClientRect();
             const td1_x_left = rect_td1.left;//左
@@ -405,21 +416,21 @@ function add_table(){
          //列(th)追加ボタンクリックイベントを作成
          add_header_button.addEventListener("click", function() { //動的に作成されたタイミングでクリックイベントを作成
             if(count_th_map.get(count_table) < 6 ){
-                // alert(count_th_map.get(count_table));//ok
+                //th数を更新
+                var count_th_new = count_th_map.get(count_table)+1;
+                count_th_map.set(count_table,count_th_new);
+                //thを作成
                 const new_th = document.createElement("textarea");
-                var last_th = count_th_map.get(count_table)+1;
-                count_th_map.set(count_table,last_th); //テーブル別th数を更新
-                // alert("table_th"+count_table + "_" + last_th);//ok
-                new_th.id = "table_th"+count_table + "_" + last_th;//動的にIDを作成 ok. 例,table_th1_3 
+                new_th.id = "table"+count_table+"_th"+ count_th_new;//動的にIDを作成 ok. 例,table1_th3
                 new_th.classList.add('label_area');
                 new_th.classList.add('for_table');
                 new_th.classList.add('no_select');
                 new_th.style.boxSizing = "border-box";
+                new_th.style.zIndex=2;
                 edit_area.appendChild(new_th);
                 //動的に位置を指定
-                var last_th_data = document.getElementById("table_th"+count_table+"_"+(last_th - 1));
-                // alert("table_th"+count_table+"_"+(last_th - 1));//ok
-                const rect_new_th = last_th_data.getBoundingClientRect();
+                var count_th_new_data = document.getElementById("table"+count_table+"_th"+ (count_th_new-1));//一つ左のthを取得
+                const rect_new_th = count_th_new_data.getBoundingClientRect();
                 const new_th_x_right= rect_new_th.right;//右
                 const new_th_x_top = rect_new_th.top;//下
                 new_th.style.left = new_th_x_right + "px";
@@ -431,20 +442,24 @@ function add_table(){
                 add_header_button.style.left = button_new_header_x_right + "px";
                 add_header_button.style.top = button_new_header_x_top + "px";
                 //tdを作成
+                var last_row = count_row_map.get(count_table);
+                for(let i = 1; i <= last_row; i++){
                 const new_td = document.createElement("textarea");
-                new_td.id = "table_td"+count_table + "_" + last_th;//動的にIDを作成 ok. 例,table_td1_3 
+                new_td.id = "table"+count_table+"_th"+ count_th_new+"_row"+i;//動的にIDを作成 ok. 例,table_th3_row1
                 new_td.classList.add('label_area');
                 new_td.classList.add('for_table_data');
                 new_td.classList.add('no_select');
                 new_td.style.boxSizing = "border-box";
+                new_td.style.zIndex=2;
                 edit_area.appendChild(new_td);
                 //動的に位置を指定
-                var last_td_data = document.getElementById("table_td"+count_table+"_"+(last_th - 1));
+                var last_td_data = document.getElementById("table"+count_table+"_th"+(count_th_new-1)+"_row"+i);
                 const rect_new_td = last_td_data.getBoundingClientRect();
                 const a_right= rect_new_td.right;//右
                 const b_top = rect_new_td.top;//下
                 new_td.style.left = a_right + "px";
                 new_td.style.top = b_top + "px";
+                }
             }else if(count_th_map.get(count_table) == 6 ){
                     var button = document.getElementById("add_header_button" + count_table);
                     button.textContent="売り切れ";
@@ -452,60 +467,45 @@ function add_table(){
         });
         //行追加ボタンクリックイベント作成
         add_row_button.addEventListener("click", function() { //動的に作成されたタイミングでクリックイベントを作成
-            add_header_button.disabled="true";
             if(count_row_map.get(count_table) < 8 ){
-                var last_row = count_row_map.get(count_table)+1;//行数＋１
-                count_row_map.set(count_table,last_row); //テーブル別行数を更新
-                var last_th = count_th_map.get(count_table); //thの数だけループ処理
-                for(let i = 1; i <= last_th; i++){
-                    const new_row_td = document.createElement("textarea");//二行目が１番目。tdと追加tdで分ける
-                    new_row_td.classList.add('label_area');
-                    new_row_td.classList.add('for_table_data');
-                    new_row_td.classList.add('no_select');
-                    new_row_td.id=("table_add_td"+count_table+"_"+last_row+"_"+i);//例，table_add_td1_1_1
-                    // alert("table_add_td"+count_table+"_"+last_row);//ok
-                    new_row_td.style.boxSizing = "border-box";
-                    edit_area.appendChild(new_row_td);
+                //行数を更新
+                var count_row_new = count_row_map.get(count_table)+1;
+                count_row_map.set(count_table,count_row_new);
+                var count_th = count_th_map.get(count_table);
+                for(let i = 1; i <= count_th; i++){
+                    //tdを作成
+                    const new_td = document.createElement("textarea");
+                    new_td.classList.add('label_area');
+                    new_td.classList.add('for_table_data');
+                    new_td.classList.add('no_select');
+                    new_td.id=("table"+count_table+"_th"+i+"_row"+count_row_new);//例，table1_th1_row1
+                    new_td.style.boxSizing = "border-box";
+                    new_td.style.zIndex=2;
+                    edit_area.appendChild(new_td);
                     //位置を設定
-                    if(last_row==1){ //tdの下につける(最初だから)
-                        const td = document.getElementById("table_td"+count_table+"_"+i);
-                        var rect_td = td.getBoundingClientRect();
-                        var td_bottom = rect_td.bottom;
-                        var td_left = rect_td.left;
-                        new_row_td.style.top = td_bottom + "px";
-                        new_row_td.style.left = td_left + "px";
-                        //  追加ボタンの位置を更新
-                        const tdx = document.getElementById("table_add_td"+count_table+"_"+last_row+"_"+1);
-                        const rect_tdx = tdx.getBoundingClientRect();
-                        var tdx_bottom = rect_tdx.bottom;
-                        var tdx_left = rect_tdx.left;
-                        add_row_button.style.top=tdx_bottom+"px";
-                        add_row_button.style.left=tdx_left+"px";
-                    }else{
-                        const td = document.getElementById("table_add_td"+count_table+"_"+(last_row-1)+"_"+i);
-                        var rect_td = td.getBoundingClientRect();
-                        var td_bottom = rect_td.bottom;
-                        var td_left = rect_td.left;
-                        new_row_td.style.top = td_bottom + "px";
-                        new_row_td.style.left = td_left + "px";
-                        //  追加ボタンの位置を更新
-                        const tdx = document.getElementById("table_add_td"+count_table+"_"+last_row+"_"+1);
-                        const rect_tdx = tdx.getBoundingClientRect();
-                        var tdx_bottom = rect_tdx.bottom;
-                        var tdx_left = rect_tdx.left;
-                        add_row_button.style.top=tdx_bottom+"px";
-                        add_row_button.style.left=tdx_left+"px";
-                    }
+                    const td = document.getElementById("table"+count_table+"_th"+i+"_row"+(count_row_new-1));//一つ上の行のtdを取得
+                    var rect_td = td.getBoundingClientRect();
+                    var td_bottom = rect_td.bottom;
+                    var td_left = rect_td.left;
+                    new_td.style.top = td_bottom + "px";
+                    new_td.style.left = td_left + "px";
+                    //  追加ボタンの位置を更新
+                    const tdx = document.getElementById("table"+count_table+"_th1_row"+count_row_new);//一番左のtdを取得
+                    const rect_tdx = tdx.getBoundingClientRect();
+                    var tdx_bottom = rect_tdx.bottom;
+                    var tdx_left = rect_tdx.left;
+                    add_row_button.style.top=tdx_bottom+"px";
+                    add_row_button.style.left=tdx_left+"px";
                 }
             }else if(count_row_map.get(count_table) == 8 ){
                     var button = document.getElementById("add_row_button" + count_table);
                     button.textContent="売り切れ";
             } 
         });
-         
-    }else if(count_table == 2){
-        const button_table = document.getElementById('button_table');
-        button_table.textContent="売り切れ";
+        if(count_table == 1){
+            const button_table = document.getElementById('button_table');
+            button_table.textContent="売り切れ";
+        }
     }
 };
 
@@ -3123,6 +3123,7 @@ function hide_background(){
 }
 
 function toumei_background(){
+    setInterval(() => {
     if(auto_style2 % 2 != 0){
         //label
         for(var i = 1; i <= 10; i++){
@@ -3175,72 +3176,34 @@ function toumei_background(){
         }
         //table1 th
         for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_th1_"+i)){
-                var th1 = document.getElementById("table_th1_"+i);
+            if(document.getElementById("table1_th"+i)){
+                var th1 = document.getElementById("table1_th"+i);
                 th1.classList.add('back_none');
             }
         }
-        //table1 td　1行目
+        //table1 td 
         for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_td1_"+i)){
-                var td1_1 = document.getElementById("table_td1_"+i);
-                td1_1.classList.add('back_none');
+            for(var x = 1; x <= 8; x++){
+                if(document.getElementById("table1_th"+i+"_row"+x)){
+                    var td = document.getElementById("table1_th"+i+"_row"+x);
+                    td.classList.add('back_none');
+                }
             }
         }
-        //table1 add　1行目
+        //table2 th
         for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_1_"+i)){
-                var td1_2 = document.getElementById("table_add_td1_1_"+i);
-                td1_2.classList.add('back_none');
+            if(document.getElementById("table1_th"+i)){
+                var th1 = document.getElementById("table1_th"+i);
+                th1.classList.add('back_none');
             }
         }
-        //table1 add　2行目
+        //table2 td 
         for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_2_"+i)){
-                var td1_2 = document.getElementById("table_add_td1_2_"+i);
-                td1_2.classList.add('back_none');
-            }
-        }
-        //table1 add　3行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_3_"+i)){
-                var td1_3 = document.getElementById("table_add_td1_3_"+i);
-                td1_3.classList.add('back_none');
-            }
-        }
-        //table1 add　4行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_4_"+i)){
-                var td1_4 = document.getElementById("table_add_td1_4_"+i);
-                td1_4.classList.add('back_none');
-            }
-        }
-        //table1 add　5行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_5_"+i)){
-                var td1_5 = document.getElementById("table_add_td1_5_"+i);
-                td1_5.classList.add('back_none');
-            }
-        }
-        //table1 add　6行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_6_"+i)){
-                var td1_6 = document.getElementById("table_add_td1_6_"+i);
-                td1_6.classList.add('back_none');
-            }
-        }
-        //table1 add　7行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_7_"+i)){
-                var td1_7 = document.getElementById("table_add_td1_7_"+i);
-                td1_7.classList.add('back_none');
-            }
-        }
-        //table1 add　8行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_8_"+i)){
-                var td1_8 = document.getElementById("table_add_td1_8_"+i);
-                td1_8.classList.add('back_none');
+            for(var x = 1; x <= 8; x++){
+                if(document.getElementById("table1_th"+i+"_row"+x)){
+                    var td = document.getElementById("table1_th"+i+"_row"+x);
+                    td.classList.add('back_none');
+                }
             }
         }
     }else{
@@ -3295,75 +3258,38 @@ function toumei_background(){
         }
         //table1 th
         for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_th1_"+i)){
-                var th1 = document.getElementById("table_th1_"+i);
+            if(document.getElementById("table1_th"+i)){
+                var th1 = document.getElementById("table1_th"+i);
                 th1.classList.remove('back_none');
             }
         }
-        //table1 td　1行目
+        //table1 td 
         for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_td1_"+i)){
-                var td1_1 = document.getElementById("table_td1_"+i);
-                td1_1.classList.remove('back_none');
+            for(var x = 1; x <= 8; x++){
+                if(document.getElementById("table1_th"+i+"_row"+x)){
+                    var td = document.getElementById("table1_th"+i+"_row"+x);
+                    td.classList.remove('back_none');
+                }
             }
         }
-        //table1 add　1行目
+        //table2 th
         for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_1_"+i)){
-                var td1_2 = document.getElementById("table_add_td1_1_"+i);
-                td1_2.classList.remove('back_none');
+            if(document.getElementById("table1_th"+i)){
+                var th1 = document.getElementById("table1_th"+i);
+                th1.classList.remove('back_none');
             }
         }
-        //table1 add　2行目
+        //table2 td 
         for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_2_"+i)){
-                var td1_2 = document.getElementById("table_add_td1_2_"+i);
-                td1_2.classList.remove('back_none');
-            }
-        }
-        //table1 add　3行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_3_"+i)){
-                var td1_3 = document.getElementById("table_add_td1_3_"+i);
-                td1_3.classList.remove('back_none');
-            }
-        }
-        //table1 add　4行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_4_"+i)){
-                var td1_4 = document.getElementById("table_add_td1_4_"+i);
-                td1_4.classList.remove('back_none');
-            }
-        }
-        //table1 add　5行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_5_"+i)){
-                var td1_5 = document.getElementById("table_add_td1_5_"+i);
-                td1_5.classList.remove('back_none');
-            }
-        }
-        //table1 add　6行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_6_"+i)){
-                var td1_6 = document.getElementById("table_add_td1_6_"+i);
-                td1_6.classList.remove('back_none');
-            }
-        }
-        //table1 add　7行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_7_"+i)){
-                var td1_7 = document.getElementById("table_add_td1_7_"+i);
-                td1_7.classList.remove('back_none');
-            }
-        }
-        //table1 add　8行目
-        for(var i = 1; i <= 6; i++){
-            if(document.getElementById("table_add_td1_8_"+i)){
-                var td1_8 = document.getElementById("table_add_td1_8_"+i);
-                td1_8.classList.remove('back_none');
+            for(var x = 1; x <= 8; x++){
+                if(document.getElementById("table1_th"+i+"_row"+x)){
+                    var td = document.getElementById("table1_th"+i+"_row"+x);
+                    td.classList.remove('back_none');
+                }
             }
         }
     }
+}, 100);
 }
 
 //******************************枠線を除去********************************************************************************** */
@@ -3466,30 +3392,30 @@ setInterval(() => {
                 auto_width_common("label"+i);
             }
         }
-        //radio1
-        for(var i = 1; i <= 8; i++){
-            if(document.getElementById("radio1_"+i)){
-                auto_width_common("radio1_"+i);
-            }
-        }
-        //radio2
-        for(var i = 1; i <= 8; i++){
-            if(document.getElementById("radio2_"+i)){
-                auto_width_common("radio2_"+i);
-            }
-        }
-        //radio3
-        for(var i = 1; i <= 8; i++){
-            if(document.getElementById("radio3_"+i)){
-                auto_width_common("radio3_"+i);
-            }
-        }
-        //radio4
-        for(var i = 1; i <= 8; i++){
-            if(document.getElementById("radio4_"+i)){
-                auto_width_common("radio4_"+i);
-            }
-        }
+        // //radio1
+        // for(var i = 1; i <= 8; i++){
+        //     if(document.getElementById("radio1_"+i)){
+        //         auto_width_common("radio1_"+i);
+        //     }
+        // }
+        // //radio2
+        // for(var i = 1; i <= 8; i++){
+        //     if(document.getElementById("radio2_"+i)){
+        //         auto_width_common("radio2_"+i);
+        //     }
+        // }
+        // //radio3
+        // for(var i = 1; i <= 8; i++){
+        //     if(document.getElementById("radio3_"+i)){
+        //         auto_width_common("radio3_"+i);
+        //     }
+        // }
+        // //radio4
+        // for(var i = 1; i <= 8; i++){
+        //     if(document.getElementById("radio4_"+i)){
+        //         auto_width_common("radio4_"+i);
+        //     }
+        // }
         //command
         for(var i = 1; i <= 10; i++){
             if(document.getElementById("command"+i)){
@@ -4675,11 +4601,11 @@ document.addEventListener('mousemove', function(event){
 
 //移動ボタンの座標をth1に代入し続ける
 
-//1
+//th1
 setInterval(() => {
-    if(document.getElementById('table_th1_1')){
+    if(document.getElementById('table1_th1')){
         var button = document.getElementById('move_button1');
-        var th = document.getElementById('table_th1_1');
+        var th = document.getElementById('table1_th1');
         var rect = button.getBoundingClientRect();
         var left = rect.left;
         var top = rect.top;
@@ -4688,157 +4614,1342 @@ setInterval(() => {
     }
     }, 10);
 
-//2
+//th2
 setInterval(() => {
-    if(document.getElementById('table_th2_1')){
-        var button = document.getElementById('move_button2');
-        var th = document.getElementById('table_th2_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = (top+35) + "px";
+    if(document.getElementById('table1_th2')){
+        var omae = document.getElementById('table1_th1');
+        var ore = document.getElementById('table1_th2');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = (rect.left + rect.width) + "px";
+        ore.style.top = rect.top + "px";
     }
     }, 10);
 
-//１テーブル1行目
+//th3
 setInterval(() => {
-    if(document.getElementById('table_td1_1')){
-        var button = document.getElementById('table_th1_1');
-        var th = document.getElementById('table_td1_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if(document.getElementById('table1_th3')){
+        var omae = document.getElementById('table1_th2');
+        var ore = document.getElementById('table1_th3');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = (rect.left + rect.width) + "px";
+        ore.style.top = rect.top + "px";
     }
     }, 10);
 
+//th4
 setInterval(() => {
-    if(document.getElementById('table_add_td1_1_1')){
-        var button = document.getElementById('table_td1_1');
-        var th = document.getElementById('table_add_td1_1_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if(document.getElementById('table1_th4')){
+        var omae = document.getElementById('table1_th3');
+        var ore = document.getElementById('table1_th4');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = (rect.left + rect.width) + "px";
+        ore.style.top = rect.top + "px";
+    }
+    }, 10);
+
+//th5
+setInterval(() => {
+    if(document.getElementById('table1_th5')){
+        var omae = document.getElementById('table1_th4');
+        var ore = document.getElementById('table1_th5');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = (rect.left + rect.width) + "px";
+        ore.style.top = rect.top + "px";
+    }
+    }, 10);
+
+//th6
+setInterval(() => {
+    if(document.getElementById('table1_th6')){
+        var omae = document.getElementById('table1_th5');
+        var ore = document.getElementById('table1_th6');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = (rect.left + rect.width) + "px";
+        ore.style.top = rect.top + "px";
+    }
+    }, 10);
+
+//１行目********************************************************************
+
+//row1_1
+setInterval(() => {
+    if(document.getElementById('table1_th1_row1')){
+        var omae = document.getElementById('table1_th1');
+        var ore = document.getElementById('table1_th1_row1');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+    }, 10);
+
+//row1_2
+setInterval(() => {
+    if(document.getElementById('table1_th2_row1')){
+        var omae = document.getElementById('table1_th2');
+        var ore = document.getElementById('table1_th2_row1');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+    }, 10);
+
+//row1_3
+setInterval(() => {
+    if(document.getElementById('table1_th3_row1')){
+        var omae = document.getElementById('table1_th3');
+        var ore = document.getElementById('table1_th3_row1');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+    }, 10);
+
+//row1_4
+setInterval(() => {
+    if(document.getElementById('table1_th4_row1')){
+        var omae = document.getElementById('table1_th4');
+        var ore = document.getElementById('table1_th4_row1');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+    }, 10);
+
+//row1_5
+setInterval(() => {
+    if(document.getElementById('table1_th5_row1')){
+        var omae = document.getElementById('table1_th5');
+        var ore = document.getElementById('table1_th5_row1');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+    }, 10);
+
+//row1_6
+setInterval(() => {
+    if(document.getElementById('table1_th6_row1')){
+        var omae = document.getElementById('table1_th6');
+        var ore = document.getElementById('table1_th6_row1');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+    }, 10);
+
+//２行目********************************************************************
+
+//row2_1
+setInterval(() => {
+    if(document.getElementById('table1_th1_row2')){
+        var omae = document.getElementById('table1_th1_row1');
+        var ore = document.getElementById('table1_th1_row2');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+    }, 10);
+
+//row2_2
+setInterval(() => {
+    if(document.getElementById('table1_th2_row2')){
+        var omae = document.getElementById('table1_th2_row1');
+        var ore = document.getElementById('table1_th2_row2');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+    }, 10);
+
+//row2_3
+setInterval(() => {
+    if (document.getElementById('table1_th3_row2')) {
+        var omae = document.getElementById('table1_th3_row1');
+        var ore = document.getElementById('table1_th3_row2');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
+//row2_4
 setInterval(() => {
-    if(document.getElementById('table_add_td1_2_1')){
-        var button = document.getElementById('table_add_td1_1_1');
-        var th = document.getElementById('table_add_td1_2_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if (document.getElementById('table1_th4_row2')) {
+        var omae = document.getElementById('table1_th4_row1');
+        var ore = document.getElementById('table1_th4_row2');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
+//row2_5
 setInterval(() => {
-    if(document.getElementById('table_add_td1_3_1')){
-        var button = document.getElementById('table_add_td1_2_1');
-        var th = document.getElementById('table_add_td1_3_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if (document.getElementById('table1_th5_row2')) {
+        var omae = document.getElementById('table1_th5_row1');
+        var ore = document.getElementById('table1_th5_row2');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
+//row2_6
 setInterval(() => {
-    if(document.getElementById('table_add_td1_4_1')){
-        var button = document.getElementById('table_add_td1_3_1');
-        var th = document.getElementById('table_add_td1_4_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if (document.getElementById('table1_th6_row2')) {
+        var omae = document.getElementById('table1_th6_row1');
+        var ore = document.getElementById('table1_th6_row2');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
+//3行目********************************************************************
+
+//row3_1
 setInterval(() => {
-    if(document.getElementById('table_add_td1_5_1')){
-        var button = document.getElementById('table_add_td1_4_1');
-        var th = document.getElementById('table_add_td1_5_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if (document.getElementById('table1_th1_row3')) {
+        var omae = document.getElementById('table1_th1_row2');
+        var ore = document.getElementById('table1_th1_row3');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
+//row3_2
 setInterval(() => {
-    if(document.getElementById('table_add_td1_6_1')){
-        var button = document.getElementById('table_add_td1_5_1');
-        var th = document.getElementById('table_add_td1_6_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if (document.getElementById('table1_th2_row3')) {
+        var omae = document.getElementById('table1_th2_row2');
+        var ore = document.getElementById('table1_th2_row3');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
+//row3_3
 setInterval(() => {
-    if(document.getElementById('table_add_td1_7_1')){
-        var button = document.getElementById('table_add_td1_6_1');
-        var th = document.getElementById('table_add_td1_7_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if (document.getElementById('table1_th3_row3')) {
+        var omae = document.getElementById('table1_th3_row2');
+        var ore = document.getElementById('table1_th3_row3');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
+//row3_4
 setInterval(() => {
-    if(document.getElementById('table_add_td1_8_1')){
-        var button = document.getElementById('table_add_td1_7_1');
-        var th = document.getElementById('table_add_td1_8_1');
-        var rect = button.getBoundingClientRect();
-        var left = rect.left;
-        var top = rect.top;
-        th.style.left = left + "px";
-        th.style.top = top + 24 + "px";
+    if (document.getElementById('table1_th4_row3')) {
+        var omae = document.getElementById('table1_th4_row2');
+        var ore = document.getElementById('table1_th4_row3');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
-//１テーブル2行目
+//row3_5
 setInterval(() => {
-    if(document.getElementById('table_th1_2')){
-        var button = document.getElementById('table_th1_1');
-        var th = document.getElementById('table_th1_2');
-        var rect = button.getBoundingClientRect();
-        var right = rect.right;
-        var top = rect.top;
-        th.style.left = right + "px";
-        th.style.top = top + "px";
+    if (document.getElementById('table1_th5_row3')) {
+        var omae = document.getElementById('table1_th5_row2');
+        var ore = document.getElementById('table1_th5_row3');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
+//row3_6
 setInterval(() => {
-    if(document.getElementById('table_td1_2')){
-        var button = document.getElementById('table_td1_1');
-        var th = document.getElementById('table_td1_2');
-        var rect = button.getBoundingClientRect();
-        var right = rect.right;
-        var top = rect.top;
-        th.style.left = right + "px";
-        th.style.top = top + "px";
+    if (document.getElementById('table1_th6_row3')) {
+        var omae = document.getElementById('table1_th6_row2');
+        var ore = document.getElementById('table1_th6_row3');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row4_1
+setInterval(() => {
+    if (document.getElementById('table1_th1_row4')) {
+        var omae = document.getElementById('table1_th1_row3');
+        var ore = document.getElementById('table1_th1_row4');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row4_2
+setInterval(() => {
+    if (document.getElementById('table1_th2_row4')) {
+        var omae = document.getElementById('table1_th2_row3');
+        var ore = document.getElementById('table1_th2_row4');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row4_3
+setInterval(() => {
+    if (document.getElementById('table1_th3_row4')) {
+        var omae = document.getElementById('table1_th3_row3');
+        var ore = document.getElementById('table1_th3_row4');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row4_4
+setInterval(() => {
+    if (document.getElementById('table1_th4_row4')) {
+        var omae = document.getElementById('table1_th4_row3');
+        var ore = document.getElementById('table1_th4_row4');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row4_5
+setInterval(() => {
+    if (document.getElementById('table1_th5_row4')) {
+        var omae = document.getElementById('table1_th5_row3');
+        var ore = document.getElementById('table1_th5_row4');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row4_6
+setInterval(() => {
+    if (document.getElementById('table1_th6_row4')) {
+        var omae = document.getElementById('table1_th6_row3');
+        var ore = document.getElementById('table1_th6_row4');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row5_1
+setInterval(() => {
+    if (document.getElementById('table1_th1_row5')) {
+        var omae = document.getElementById('table1_th1_row4');
+        var ore = document.getElementById('table1_th1_row5');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row5_2
+setInterval(() => {
+    if (document.getElementById('table1_th2_row5')) {
+        var omae = document.getElementById('table1_th2_row4');
+        var ore = document.getElementById('table1_th2_row5');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row5_3
+setInterval(() => {
+    if (document.getElementById('table1_th3_row5')) {
+        var omae = document.getElementById('table1_th3_row4');
+        var ore = document.getElementById('table1_th3_row5');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row5_4
+setInterval(() => {
+    if (document.getElementById('table1_th4_row5')) {
+        var omae = document.getElementById('table1_th4_row4');
+        var ore = document.getElementById('table1_th4_row5');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row5_5
+setInterval(() => {
+    if (document.getElementById('table1_th5_row5')) {
+        var omae = document.getElementById('table1_th5_row4');
+        var ore = document.getElementById('table1_th5_row5');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row5_6
+setInterval(() => {
+    if (document.getElementById('table1_th6_row5')) {
+        var omae = document.getElementById('table1_th6_row4');
+        var ore = document.getElementById('table1_th6_row5');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row6_1
+setInterval(() => {
+    if (document.getElementById('table1_th1_row6')) {
+        var omae = document.getElementById('table1_th1_row5');
+        var ore = document.getElementById('table1_th1_row6');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row6_2
+setInterval(() => {
+    if (document.getElementById('table1_th2_row6')) {
+        var omae = document.getElementById('table1_th2_row5');
+        var ore = document.getElementById('table1_th2_row6');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row6_3
+setInterval(() => {
+    if (document.getElementById('table1_th3_row6')) {
+        var omae = document.getElementById('table1_th3_row5');
+        var ore = document.getElementById('table1_th3_row6');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row6_4
+setInterval(() => {
+    if (document.getElementById('table1_th4_row6')) {
+        var omae = document.getElementById('table1_th4_row5');
+        var ore = document.getElementById('table1_th4_row6');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row6_5
+setInterval(() => {
+    if (document.getElementById('table1_th5_row6')) {
+        var omae = document.getElementById('table1_th5_row5');
+        var ore = document.getElementById('table1_th5_row6');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row6_6
+setInterval(() => {
+    if (document.getElementById('table1_th6_row6')) {
+        var omae = document.getElementById('table1_th6_row5');
+        var ore = document.getElementById('table1_th6_row6');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row7_1
+setInterval(() => {
+    if (document.getElementById('table1_th1_row7')) {
+        var omae = document.getElementById('table1_th1_row6');
+        var ore = document.getElementById('table1_th1_row7');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row7_2
+setInterval(() => {
+    if (document.getElementById('table1_th2_row7')) {
+        var omae = document.getElementById('table1_th2_row6');
+        var ore = document.getElementById('table1_th2_row7');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row7_3
+setInterval(() => {
+    if (document.getElementById('table1_th3_row7')) {
+        var omae = document.getElementById('table1_th3_row6');
+        var ore = document.getElementById('table1_th3_row7');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row7_4
+setInterval(() => {
+    if (document.getElementById('table1_th4_row7')) {
+        var omae = document.getElementById('table1_th4_row6');
+        var ore = document.getElementById('table1_th4_row7');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row7_5
+setInterval(() => {
+    if (document.getElementById('table1_th5_row7')) {
+        var omae = document.getElementById('table1_th5_row6');
+        var ore = document.getElementById('table1_th5_row7');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row7_6
+setInterval(() => {
+    if (document.getElementById('table1_th6_row7')) {
+        var omae = document.getElementById('table1_th6_row6');
+        var ore = document.getElementById('table1_th6_row7');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row8_1
+setInterval(() => {
+    if (document.getElementById('table1_th1_row8')) {
+        var omae = document.getElementById('table1_th1_row7');
+        var ore = document.getElementById('table1_th1_row8');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row8_2
+setInterval(() => {
+    if (document.getElementById('table1_th2_row8')) {
+        var omae = document.getElementById('table1_th2_row7');
+        var ore = document.getElementById('table1_th2_row8');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row8_3
+setInterval(() => {
+    if (document.getElementById('table1_th3_row8')) {
+        var omae = document.getElementById('table1_th3_row7');
+        var ore = document.getElementById('table1_th3_row8');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row8_4
+setInterval(() => {
+    if (document.getElementById('table1_th4_row8')) {
+        var omae = document.getElementById('table1_th4_row7');
+        var ore = document.getElementById('table1_th4_row8');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row8_5
+setInterval(() => {
+    if (document.getElementById('table1_th5_row8')) {
+        var omae = document.getElementById('table1_th5_row7');
+        var ore = document.getElementById('table1_th5_row8');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
+    }
+}, 10);
+
+//row8_6
+setInterval(() => {
+    if (document.getElementById('table1_th6_row8')) {
+        var omae = document.getElementById('table1_th6_row7');
+        var ore = document.getElementById('table1_th6_row8');
+        var rect = omae.getBoundingClientRect();
+        ore.style.left = rect.left + "px";
+        ore.style.top = rect.bottom + "px";
     }
 }, 10);
 
 
+
+/**************テーブルのheightを統一******************************************************/
+
+// ｔｈ
+
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+
+// row1
+
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row1');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row1');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row1');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row1');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row1');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row1');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row2
+
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row2');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row2');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row2');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row2');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row2');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row2');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row1
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row1');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row1');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row1');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row1');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row1');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row1');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row2
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row2');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row2');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row2');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row2');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row2');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row2');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row3
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row3');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row3');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row3');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row3');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row3');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row3');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row4
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row4');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row4');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row4');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row4');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row4');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row4');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row5
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row5');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row5');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row5');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row5');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row5');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row5');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row6
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row6');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row6');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row6');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row6');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row6');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row6');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row7
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row7');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row7');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row7');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row7');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row7');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row7');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+// row8
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1_row8');
+    if (th1) {
+        const th_height = th1.getBoundingClientRect().height + "px";
+
+        // 2
+        const th2 = document.getElementById('table1_th2_row8');
+        if (th2) {
+            th2.style.height = th_height;
+        }
+
+        // 3
+        const th3 = document.getElementById('table1_th3_row8');
+        if (th3) {
+            th3.style.height = th_height;
+        }
+
+        // 4
+        const th4 = document.getElementById('table1_th4_row8');
+        if (th4) {
+            th4.style.height = th_height;
+        }
+
+        // 5
+        const th5 = document.getElementById('table1_th5_row8');
+        if (th5) {
+            th5.style.height = th_height;
+        }
+
+        // 6
+        const th6 = document.getElementById('table1_th6_row8');
+        if (th6) {
+            th6.style.height = th_height;
+        }
+    }
+}, 10);
+
+
+//*******widthを自動調整　明細********************************************** */
+
+// th1 監視
+setInterval(() => {
+    const th1 = document.getElementById('table1_th1');
+    if (th1) {
+        const th_width = th1.getBoundingClientRect().width + "px";
+        // 1
+        const row1 = document.getElementById('table1_th1_row1');
+        if (row1) {
+            row1.style.width = th_width;
+        }
+        // 2
+        const row2 = document.getElementById('table1_th1_row2');
+        if (row2) {
+            row2.style.width = th_width;
+        }
+        // 3
+        const row3 = document.getElementById('table1_th1_row3');
+        if (row3) {
+            row3.style.width = th_width;
+        }
+        // 4
+        const row4 = document.getElementById('table1_th1_row4');
+        if (row4) {
+            row4.style.width = th_width;
+        }
+        // 5
+        const row5 = document.getElementById('table1_th1_row5');
+        if (row5) {
+            row5.style.width = th_width;
+        }
+        // 6
+        const row6 = document.getElementById('table1_th1_row6');
+        if (row6) {
+            row6.style.width = th_width;
+        }
+        // 7
+        const row7 = document.getElementById('table1_th1_row7');
+        if (row7) {
+            row7.style.width = th_width;
+        }
+        // 8
+        const row8 = document.getElementById('table1_th1_row8');
+        if (row8) {
+            row8.style.width = th_width;
+        }
+    }
+}, 10);
+
+// th2 監視
+setInterval(() => {
+    const th2 = document.getElementById('table1_th2');
+    if (th2) {
+        const th_width = th2.getBoundingClientRect().width + "px";
+        // 1
+        const row1 = document.getElementById('table1_th2_row1');
+        if (row1) {
+            row1.style.width = th_width;
+        }
+        // 2
+        const row2 = document.getElementById('table1_th2_row2');
+        if (row2) {
+            row2.style.width = th_width;
+        }
+        // 3
+        const row3 = document.getElementById('table1_th2_row3');
+        if (row3) {
+            row3.style.width = th_width;
+        }
+        // 4
+        const row4 = document.getElementById('table1_th2_row4');
+        if (row4) {
+            row4.style.width = th_width;
+        }
+        // 5
+        const row5 = document.getElementById('table1_th2_row5');
+        if (row5) {
+            row5.style.width = th_width;
+        }
+        // 6
+        const row6 = document.getElementById('table1_th2_row6');
+        if (row6) {
+            row6.style.width = th_width;
+        }
+        // 7
+        const row7 = document.getElementById('table1_th2_row7');
+        if (row7) {
+            row7.style.width = th_width;
+        }
+        // 8
+        const row8 = document.getElementById('table1_th2_row8');
+        if (row8) {
+            row8.style.width = th_width;
+        }
+    }
+}, 10);
+
+// th3 監視
+setInterval(() => {
+    const th3 = document.getElementById('table1_th3');
+    if (th3) {
+        const th_width = th3.getBoundingClientRect().width + "px";
+        // 1
+        const row1 = document.getElementById('table1_th3_row1');
+        if (row1) {
+            row1.style.width = th_width;
+        }
+        // 2
+        const row2 = document.getElementById('table1_th3_row2');
+        if (row2) {
+            row2.style.width = th_width;
+        }
+        // 3
+        const row3 = document.getElementById('table1_th3_row3');
+        if (row3) {
+            row3.style.width = th_width;
+        }
+        // 4
+        const row4 = document.getElementById('table1_th3_row4');
+        if (row4) {
+            row4.style.width = th_width;
+        }
+        // 5
+        const row5 = document.getElementById('table1_th3_row5');
+        if (row5) {
+            row5.style.width = th_width;
+        }
+        // 6
+        const row6 = document.getElementById('table1_th3_row6');
+        if (row6) {
+            row6.style.width = th_width;
+        }
+        // 7
+        const row7 = document.getElementById('table1_th3_row7');
+        if (row7) {
+            row7.style.width = th_width;
+        }
+        // 8
+        const row8 = document.getElementById('table1_th3_row8');
+        if (row8) {
+            row8.style.width = th_width;
+        }
+    }
+}, 10);
+
+// th4 監視
+setInterval(() => {
+    const th4 = document.getElementById('table1_th4');
+    if (th4) {
+        const th_width = th4.getBoundingClientRect().width + "px";
+        // 1
+        const row1 = document.getElementById('table1_th4_row1');
+        if (row1) {
+            row1.style.width = th_width;
+        }
+        // 2
+        const row2 = document.getElementById('table1_th4_row2');
+        if (row2) {
+            row2.style.width = th_width;
+        }
+        // 3
+        const row3 = document.getElementById('table1_th4_row3');
+        if (row3) {
+            row3.style.width = th_width;
+        }
+        // 4
+        const row4 = document.getElementById('table1_th4_row4');
+        if (row4) {
+            row4.style.width = th_width;
+        }
+        // 5
+        const row5 = document.getElementById('table1_th4_row5');
+        if (row5) {
+            row5.style.width = th_width;
+        }
+        // 6
+        const row6 = document.getElementById('table1_th4_row6');
+        if (row6) {
+            row6.style.width = th_width;
+        }
+        // 7
+        const row7 = document.getElementById('table1_th4_row7');
+        if (row7) {
+            row7.style.width = th_width;
+        }
+        // 8
+        const row8 = document.getElementById('table1_th4_row8');
+        if (row8) {
+            row8.style.width = th_width;
+        }
+    }
+}, 10);
+
+// th5 監視
+setInterval(() => {
+    const th5 = document.getElementById('table1_th5');
+    if (th5) {
+        const th_width = th5.getBoundingClientRect().width + "px";
+        // 1
+        const row1 = document.getElementById('table1_th5_row1');
+        if (row1) {
+            row1.style.width = th_width;
+        }
+        // 2
+        const row2 = document.getElementById('table1_th5_row2');
+        if (row2) {
+            row2.style.width = th_width;
+        }
+        // 3
+        const row3 = document.getElementById('table1_th5_row3');
+        if (row3) {
+            row3.style.width = th_width;
+        }
+        // 4
+        const row4 = document.getElementById('table1_th5_row4');
+        if (row4) {
+            row4.style.width = th_width;
+        }
+        // 5
+        const row5 = document.getElementById('table1_th5_row5');
+        if (row5) {
+            row5.style.width = th_width;
+        }
+        // 6
+        const row6 = document.getElementById('table1_th5_row6');
+        if (row6) {
+            row6.style.width = th_width;
+        }
+        // 7
+        const row7 = document.getElementById('table1_th5_row7');
+        if (row7) {
+            row7.style.width = th_width;
+        }
+        // 8
+        const row8 = document.getElementById('table1_th5_row8');
+        if (row8) {
+            row8.style.width = th_width;
+        }
+    }
+}, 10);
+
+// th6 監視
+setInterval(() => {
+    const th6 = document.getElementById('table1_th6');
+    if (th6) {
+        const th_width = th6.getBoundingClientRect().width + "px";
+        // 1
+        const row1 = document.getElementById('table1_th6_row1');
+        if (row1) {
+            row1.style.width = th_width;
+        }
+        // 2
+        const row2 = document.getElementById('table1_th6_row2');
+        if (row2) {
+            row2.style.width = th_width;
+        }
+        // 3
+        const row3 = document.getElementById('table1_th6_row3');
+        if (row3) {
+            row3.style.width = th_width;
+        }
+        // 4
+        const row4 = document.getElementById('table1_th6_row4');
+        if (row4) {
+            row4.style.width = th_width;
+        }
+        // 5
+        const row5 = document.getElementById('table1_th6_row5');
+        if (row5) {
+            row5.style.width = th_width;
+        }
+        // 6
+        const row6 = document.getElementById('table1_th6_row6');
+        if (row6) {
+            row6.style.width = th_width;
+        }
+        // 7
+        const row7 = document.getElementById('table1_th6_row7');
+        if (row7) {
+            row7.style.width = th_width;
+        }
+        // 8
+        const row8 = document.getElementById('table1_th6_row8');
+        if (row8) {
+            row8.style.width = th_width;
+        }
+    }
+}, 10);
+
+/*********************追加ボタン　動的位置調整********************** */
+
+// header
+setInterval(() => {
+    const button = document.getElementById('add_header_button1');
+    if (button) {
+        var last_th = count_th_map.get(1);
+        var th = document.getElementById('table1_th' + last_th);
+        var rect = th.getBoundingClientRect();
+        button.style.left=(rect.left+rect.width)+"px";
+        button.style.top=rect.top+"px";
+    }
+}, 10);
+
+//row
+setInterval(() => {
+    const button = document.getElementById('add_row_button1');
+    if (button) {
+        var last_row = count_row_map.get(1);
+        var th = document.getElementById('table1_th1_row' + last_row);
+        var rect = th.getBoundingClientRect();
+        button.style.left=rect.left+"px";
+        button.style.top=rect.bottom+"px";
+    }
+}, 10);
+
+/***********************************************************/
 
 function create_html(){
-    if(document.getElementById('label1') || document.getElementById('textbox1') || document.getElementById('radio1_1') || document.getElementById('command1') || document.getElementById('table_th1_1')){
+    if(document.getElementById('label1') || document.getElementById('textbox1') || document.getElementById('radio1_1') || document.getElementById('command1') || document.getElementById('table1_th1')){
         result_code="";
         result_code+=templete_head;
         create_label();
@@ -4848,6 +5959,7 @@ function create_html(){
         create_radio2();
         create_radio3();
         create_radio4();
+        create_table();
         result_code+=templete_body;
         pop_up();
     }else{
@@ -4865,7 +5977,7 @@ function pop_up() {
     pop.style.top = "50px";
     pop.style.left = "50px";
     pop.id = "back_div";
-    pop.style.zIndex=1;
+    pop.style.zIndex=3;
     // 新しい input 要素を作成
     var input = document.createElement("textarea");
     input.style.width = "100%";
@@ -4873,7 +5985,7 @@ function pop_up() {
     input.style.backgroundColor = "black";
     input.style.color = "rgb(102, 220, 145)";
     input.value=result_code;
-    input.style.zIndex=2;
+    input.style.zIndex=4;
     // input.style.fontSize="17px";
     input.id = "back_input";
     pop.appendChild(input);
@@ -4881,30 +5993,30 @@ function pop_up() {
     //コピーボタン
     var copy_button = document.getElementById('copy_button');
     copy_button.hidden=false;
-    copy_button.style.zIndex=3;
+    copy_button.style.zIndex=5;
     copy_button.style.position="absolute";
     var rect = input.getBoundingClientRect();
-    copy_button.style.left=rect.right-170+"px";
+    copy_button.style.left=rect.right-190+"px";
     copy_button.style.top=rect.bottom-35+"px";
     copy_button.style.backgroundColor="black";
     //プレビューボタン
     var preview_button = document.getElementById('preview_button');
     preview_button.hidden=false;
-    preview_button.style.zIndex=3;
+    preview_button.style.zIndex=5;
     preview_button.style.position="absolute";
     var rect = input.getBoundingClientRect();
-    preview_button.style.left=rect.right-270+"px";
+    preview_button.style.left=rect.right-290+"px";
     preview_button.style.top=rect.bottom-35+"px";
     preview_button.style.backgroundColor="black";
     //×ボタン
     var delete_button = document.getElementById('delete_button');
     delete_button.hidden=false;
-    delete_button.style.zIndex=3;
+    delete_button.style.zIndex=5;
     delete_button.style.position="absolute";
     delete_button.style.border="none";
     delete_button.style.fontSize="20px";
     var rect = input.getBoundingClientRect();
-    delete_button.style.left=rect.right-28+"px";
+    delete_button.style.left=rect.right-40+"px";
     delete_button.style.top=rect.top+2+"px";
     delete_button.style.backgroundColor="black";
     disabled_change(true);
@@ -4974,7 +6086,7 @@ var templete_label_c = `%; width:`;
 var templete_label_d = `%; height:`; 
 var templete_label_e = `%; font-size:`; 
 var templete_label_f = `; ">`; 
-var templete_label_g = `    </label>
+var templete_label_g = `</label>
 `; 
 
 function create_label(){
@@ -5073,7 +6185,7 @@ function create_command(){
         var top = (command9.top-area9.top)/550 * 100; //%
         top = Math.round(top);
         var height = command9.height/978*100; //%
-        height = Math.round(height);
+        height = Math.round(height)+1;//なぜか小さくなるのでちょっと盛る（＋２％）
         var width = command9.width/978*100; //%
         width = Math.round(width);
         var text = command.value;
@@ -5094,7 +6206,7 @@ function create_command(){
 
 //グループ１
 
-var templete_radio1_a = `       <input type="radio"id="" name="radio1" style="position: absolute; left:`;
+var templete_radio1_a = `       <input type="radio" id="" name="radio1" style="position: absolute; left:`;
 var templete_radio1_b = `%; top:`;
 var templete_radio1_f = `%" value="`;
 var templete_radio1_g = `">
@@ -5139,7 +6251,7 @@ function create_radio1(){
 
 //グループ２
 
-var templete_radio2_a = `       <input type="radio"id="" name="radio2" style="position: absolute; left:`;
+var templete_radio2_a = `       <input type="radio" id="" name="radio2" style="position: absolute; left:`;
 var templete_radio2_b = `%; top:`;
 var templete_radio2_f = `%" value="`;
 var templete_radio2_g = `">
@@ -5184,7 +6296,7 @@ function create_radio2(){
 
 //グループ３
 
-var templete_radio3_a = `       <input type="radio"id="" name="radio3" style="position: absolute; left:`;
+var templete_radio3_a = `       <input type="radio" id="" name="radio3" style="position: absolute; left:`;
 var templete_radio3_b = `%; top:`;
 var templete_radio3_f = `%" value="`;
 var templete_radio3_g = `">
@@ -5229,7 +6341,7 @@ function create_radio3(){
 
 //グループ４
 
-var templete_radio4_a = `       <input type="radio"id="" name="radio4" style="position: absolute; left:`;
+var templete_radio4_a = `       <input type="radio" id="" name="radio4" style="position: absolute; left:`;
 var templete_radio4_b = `%; top:`;
 var templete_radio4_f = `%" value="`;
 var templete_radio4_g = `">
@@ -5272,8 +6384,174 @@ function create_radio4(){
     }
 };
 
-// function preview(){
-//     document.getElementById('edit_area').innerHTML=result_code;
+//明細コード生成**********************************************************************************************
 
+//テーブル１
+
+//テーブルのwidthとheightを取得
+var table1_width = 0;
+    var table1_width_percent = 0;
+var table1_height = 0;
+    var table1_height_percent = 0;
+
+function sum_width_table1(){
+    if(document.getElementById('table1_th1')){
+        table1_width=0;
+        table1_width_percent=0;
+        for(var i = 1; i <= 6; i++){
+            if(document.getElementById("table1_th"+i)){
+                var th = document.getElementById("table1_th"+i);
+                var rect = th.getBoundingClientRect();
+                table1_width += rect.width;
+            }
+        }
+        table1_width_percent = table1_width/978*100;
+        table1_width_percent = Math.round(table1_width_percent);
+    }
+}
+
+function sum_height_table1(){
+    if(document.getElementById('table1_th1')){
+        table1_height = 0;
+        table1_height_percent = 0;
+        var th1 = document.getElementById('table1_th1');
+        var th1_rect = th1.getBoundingClientRect();
+        table1_height += th1_rect.height;
+        for(var i = 1; i <= 8; i++){
+            if(document.getElementById("table1_th1_row"+i)){
+                var td = document.getElementById("table1_th1_row"+i);
+                var rect = td.getBoundingClientRect();
+                table1_height += rect.height;
+            }
+        }
+        table1_height_percent = table1_height/550*100;
+        table1_height_percent = Math.round(table1_height_percent);
+    }
+}
+
+//th
+var templete_th_a = `
+    <th style="width:`;
+var templete_th_b = `%; height:`; 
+var templete_th_c = `%; font-size:`; 
+var templete_th_d = `">`; 
+var templete_th_e = `</th>`; 
+
+//td
+var templete_td_a = `
+    <td style="width:`;
+var templete_td_b = `%; font-size:`; 
+var templete_td_c = `">`; 
+var templete_td_d = `</td>`; 
+
+//関数
+function create_table(){
+    sum_width_table1();
+    sum_height_table1();
+    create_table1();
+}
+
+function create_table1(){
+    //スタイルを追加
+    if(document.getElementById('table1_th1')){
+        result_code += `
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px;
+    }
+    th{
+        text-decoration: underline;
+    }
+</style>
+`;
+        //変数定義
+        var code_table = "";
+        var code_th = "";
+        var code_td = "";
+        var code_td_td = "";
+        var area = document.getElementById('edit_area_header');
+        var area9=area.getBoundingClientRect();
+        //th1のHeight
+        var th1_aaa = document.getElementById('table1_th1');
+        var rect_th1_aaa = th1_aaa.getBoundingClientRect();
+        var th1_height = rect_th1_aaa.height;
+        th1_height = th1_height/550*100;//%
+        th1_height = Math.round(th1_height);
+
+        //theadを作成 ok!*****
+        var th1 = document.getElementById('table1_th1');//左上のth（座標設定用）
+        var rect_th1 = th1.getBoundingClientRect();
+        var th1_left = (rect_th1.left-area9.left)/978 * 100; //%
+        th1_left = Math.round(th1_left);
+        var th1_top = (rect_th1.top-area9.top)/550 * 100; //%
+        th1_top = Math.round(th1_top);
+        for(var i = 1; i <= 6; i++){//ヘッダー番号 i
+            if(document.getElementById("table1_th"+i)){
+                const th = document.getElementById("table"+1+"_th"+i);
+                var rect_th=th.getBoundingClientRect();
+                var width = rect_th.width/978*100; //width　%
+                width = Math.round(width);
+                var text = th.value;//テキスト内容
+                var computedStyle = getComputedStyle(th);
+                var font = computedStyle.fontSize;//フォントサイズ
+                code_th += (templete_th_a + width + templete_th_b + th1_height + templete_th_c + font + templete_th_d + text + templete_th_e);
+            }
+        }
+        code_table+=(`
+<thead>` + code_th + `
+</thead>`);
+        // alert(code_table);
+
+        //tbodyを作成*****
+        var row = count_row_map.get(1);
+        for(var a = 1; a <= row; a++){ //×行数
+            code_td = "";
+            for(var b = 1; b <= 6; b++){
+                if(document.getElementById("table1_th"+b+"_row"+a)){
+                    const td = document.getElementById("table1_th"+b+"_row"+a);
+                    var rect_td=td.getBoundingClientRect();
+                    var width = rect_td.width/978*100; //width　%
+                    width = Math.round(width);
+                    var text = td.value;//テキスト内容
+                    var computedStyle = getComputedStyle(td);
+                    var font = computedStyle.fontSize;//フォントサイズ
+                    code_td += (templete_td_a + width + templete_td_b + font + templete_td_c + text + templete_td_d);
+                }
+            }
+            //左rowのHeight
+            var td1_aaa = document.getElementById("table1_th1_row"+a);
+            var rect_td1_aaa = td1_aaa.getBoundingClientRect();
+            var td1_height = rect_td1_aaa.height;
+            td1_height = td1_height/550*100;//%
+            td1_height = Math.round(td1_height);
+
+            code_td_td += `<tr style="height:`+td1_height+`%">`+code_td+`
+</tr>
+`;
+        }
+        code_table += `
+<tbody>
+`+code_td_td+`
+</tbody>`;
+        result_code += (`<table style = "position:absolute; top:`+th1_top+`%; left:`+th1_left+`%; width:`+table1_width_percent+`%; height:`+table1_height_percent+`%">`+code_table+`
+</table>`);
+    }
+}
+
+
+
+
+
+//preview押下時処理*****************************************************************************************
+function preview(){
+    const newWindow = window.open('preview.html', '_blank', `width=${screen.width},height=${screen.height},top=0,left=0`);
+    newWindow.onload = function() {
+        newWindow.postMessage(result_code, '*');
+    };
     
-// }
+    
+}

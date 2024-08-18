@@ -3,6 +3,10 @@ body{
     background-color: antiquewhite;
 }
 
+.body_color{
+    background-color: antiquewhite;
+}
+
 /* メインのテキストエリア */
 .main_area{
     width: 978px;/*16:9*/
@@ -216,3 +220,15 @@ body{
     left:1040px;
     top:250px;
 }
+
+.for_kakunin_div{
+    width: 978px;/*16:9*/
+    height: 350px;
+    /* padding: 10px; */
+    border:1px solid gray;
+    border-radius: 5px;
+    resize:none;
+    margin-left: 10px;
+    background-color: rgb(228, 216, 201);
+}
+
